@@ -213,8 +213,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 702d0fa10251ffe4bac35ed1358bf258, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  jumpHeight: 2
+  moveSpeed: 5
+  cameramoveSpeed: 250
+  jumpHeight: 2.1
   gravity: -9.8
 --- !u!1 &6450090508277849922
 GameObject:
