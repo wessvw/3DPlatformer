@@ -215,6 +215,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   cameramoveSpeed: 250
+  cameraDistance: 7
   jumpHeight: 2.1
   gravity: -9.8
 --- !u!1 &6450090508277849922

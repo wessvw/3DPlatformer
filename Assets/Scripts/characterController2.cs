@@ -1,5 +1,3 @@
-
-// using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Composites;
@@ -8,7 +6,10 @@ using UnityEngine.InputSystem.Composites;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 5f;
-    [SerializeField] float cameramoveSpeed = 250f;
+    [SerializeField] float cameramoveSpeed = 150f;
+    [SerializeField] float cameraDistance = 5f;
+    private float yaw = 0f;
+    private float pitch = 20f; // slight downward look by default
     [SerializeField] float jumpHeight = 2f;
     [SerializeField] float gravity = -9.81f;
     private Vector2 moveInput;
@@ -17,8 +18,6 @@ public class PlayerController : MonoBehaviour
     private Vector2 vectorinput;
     private Camera playerCamera;
     private bool isGrounded;
-    private float lookx;
-    private float looky;
 
     void Awake()
     {
@@ -35,6 +34,8 @@ public class PlayerController : MonoBehaviour
         );
         Transform firstChild = this.transform.GetChild(0);
         playerCamera = firstChild.GetComponent<Camera>();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     // Input System calls this automatically per player
@@ -53,13 +54,12 @@ public class PlayerController : MonoBehaviour
 
     public void OnLook(InputValue input)
     {
+        Debug.Log("i am looking");
         vectorinput = input.Get<Vector2>();
     }
 
     void Update()
     {
-        Vector3 forward = transform.TransformDirection(Vector3.forward);
-        Vector3 right = transform.TransformDirection(Vector3.right);
         // Ground check
         isGrounded = controller.isGrounded;
         if (isGrounded && velocity.y < 0)
@@ -67,19 +67,40 @@ public class PlayerController : MonoBehaviour
             velocity.y = -2f;
         }
 
-        // Movement
-        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
+        // --- Movement relative to camera ---
+        Vector3 camForward = playerCamera.transform.forward;
+        Vector3 camRight = playerCamera.transform.right;
+
+        // Ignore vertical tilt of the camera
+        camForward.y = 0f;
+        camRight.y = 0f;
+        camForward.Normalize();
+        camRight.Normalize();
+
+        // Build movement vector
+        Vector3 move = (camForward * moveInput.y + camRight * moveInput.x).normalized;
         controller.Move(move * moveSpeed * Time.deltaTime);
-        this.transform.localRotation = new Quaternion(0f, playerCamera.transform.rotation.x, 0f, 0f);
+
         // Gravity
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
-        // Camera movement
-        Vector3 cameraMove = new Vector3(vectorinput.x, 0, vectorinput.y);
-        playerCamera.transform.RotateAround(this.transform.position, Vector3.up, -cameraMove.x * cameramoveSpeed * Time.deltaTime);
-        Vector3 cameraright = playerCamera.transform.right;
-        playerCamera.transform.RotateAround(this.transform.position, cameraright, cameraMove.y * cameramoveSpeed * Time.deltaTime);
+        // --- Camera orbit movement ---
+        yaw += vectorinput.x * cameramoveSpeed * Time.deltaTime;
+        pitch -= vectorinput.y * cameramoveSpeed * Time.deltaTime;
 
+        // Clamp vertical pitch so camera doesn’t flip
+        pitch = Mathf.Clamp(pitch, 0f, 70f);
+
+        // Calculate camera rotation
+        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+
+        // Set camera position behind player
+        Vector3 offset = rotation * new Vector3(0f, 0f, -cameraDistance);
+        playerCamera.transform.position = transform.position + offset;
+
+        // Make camera look at player
+        Vector3 pointToLookAt = new Vector3(0, 0, 0);
+        playerCamera.transform.LookAt(transform.position + pointToLookAt * 1.5f); // aim at chest/head height
     }
 }
