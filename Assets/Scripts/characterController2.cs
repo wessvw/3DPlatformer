@@ -8,16 +8,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float cameramoveSpeed = 150f;
     [SerializeField] float cameraDistance = 5f;
-    private float yaw = 0f;
-    private float pitch = 20f; // slight downward look by default
     [SerializeField] float jumpHeight = 2f;
     [SerializeField] float gravity = -9.81f;
+    private float yaw = 0f;
+    private float pitch = 20f; // slight downward look by default
+    private float coyoteTime = 0.1f;
+    private float coyoteTimeCounter;
     private Vector2 moveInput;
     private CharacterController controller;
     private Vector3 velocity;
     private Vector2 vectorinput;
     private Camera playerCamera;
     private bool isGrounded;
+    Vector3 playerRotation = new Vector3(0, 0, 0);
 
     void Awake()
     {
@@ -50,13 +53,23 @@ public class PlayerController : MonoBehaviour
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
+        else if (coyoteTimeCounter > 0f)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            coyoteTimeCounter = 0f;
+        }
     }
 
     public void OnLook(InputValue input)
     {
-        Debug.Log("i am looking");
+        Debug.Log(input);
+        // if ()
+        // {
+            
+        // }
         vectorinput = input.Get<Vector2>();
     }
+
 
     void Update()
     {
@@ -66,9 +79,18 @@ public class PlayerController : MonoBehaviour
         {
             velocity.y = -2f;
         }
+        if (isGrounded)
+        {
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
+        
 
         // --- Movement relative to camera ---
-        Vector3 camForward = playerCamera.transform.forward;
+            Vector3 camForward = playerCamera.transform.forward;
         Vector3 camRight = playerCamera.transform.right;
 
         // Ignore vertical tilt of the camera
@@ -99,8 +121,12 @@ public class PlayerController : MonoBehaviour
         Vector3 offset = rotation * new Vector3(0f, 0f, -cameraDistance);
         playerCamera.transform.position = transform.position + offset;
 
+        // rotate the player based on camera position
+        Quaternion targetRotation = Quaternion.LookRotation(camForward);
+        this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, Time.deltaTime * 10f);
+
         // Make camera look at player
         Vector3 pointToLookAt = new Vector3(0, 0, 0);
-        playerCamera.transform.LookAt(transform.position + pointToLookAt * 1.5f); // aim at chest/head height
+        playerCamera.transform.LookAt(this.transform.position + pointToLookAt); // aim at chest/head height
     }
 }
