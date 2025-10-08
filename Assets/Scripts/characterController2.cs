@@ -12,7 +12,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float gravity = -9.81f;
     private float yaw = 0f;
     private float pitch = 20f; // slight downward look by default
-    private float coyoteTime = 0.1f;
     private float coyoteTimeCounter;
     private Vector2 moveInput;
     private CharacterController controller;
@@ -20,7 +19,6 @@ public class PlayerController : MonoBehaviour
     private Vector2 vectorinput;
     private Camera playerCamera;
     private bool isGrounded;
-    Vector3 playerRotation = new Vector3(0, 0, 0);
 
     void Awake()
     {
@@ -41,35 +39,6 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
     }
 
-    // Input System calls this automatically per player
-    public void OnMove(InputValue input)
-    {
-        moveInput = input.Get<Vector2>();
-    }
-
-    public void OnJump(InputValue input)
-    {
-        if (input.isPressed && isGrounded)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        }
-        else if (coyoteTimeCounter > 0f)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            coyoteTimeCounter = 0f;
-        }
-    }
-
-    public void OnLook(InputValue input)
-    {
-        Debug.Log(input);
-        // if ()
-        // {
-            
-        // }
-        vectorinput = input.Get<Vector2>();
-    }
-
 
     void Update()
     {
@@ -81,16 +50,16 @@ public class PlayerController : MonoBehaviour
         }
         if (isGrounded)
         {
-            coyoteTimeCounter = coyoteTime;
+            coyoteTimeCounter = 0.1f;
         }
         else
         {
             coyoteTimeCounter -= Time.deltaTime;
         }
-        
+
 
         // --- Movement relative to camera ---
-            Vector3 camForward = playerCamera.transform.forward;
+        Vector3 camForward = playerCamera.transform.forward;
         Vector3 camRight = playerCamera.transform.right;
 
         // Ignore vertical tilt of the camera
@@ -128,5 +97,46 @@ public class PlayerController : MonoBehaviour
         // Make camera look at player
         Vector3 pointToLookAt = new Vector3(0, 0, 0);
         playerCamera.transform.LookAt(this.transform.position + pointToLookAt); // aim at chest/head height
+    }
+
+    public void OnMove(InputValue input)
+    {
+        moveInput = input.Get<Vector2>();
+    }
+
+    public void OnJump(InputValue input)
+    {
+        if (input.isPressed && isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
+        else if (coyoteTimeCounter > 0f)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            coyoteTimeCounter = 0f;
+        }
+    }
+
+
+    public void OnLook(InputValue input)
+    {
+        vectorinput = input.Get<Vector2>();
+    }
+
+    public void OnAbility1(InputValue input)
+    {
+        Debug.Log("ab1");
+    }
+    public void OnAbility2(InputValue input)
+    {
+        Debug.Log("ab2");
+    }
+    public void OnAbility3(InputValue input)
+    {
+        Debug.Log("ab3");
+    }
+    public void OnAbility4(InputValue input)
+    {
+        Debug.Log("ab4");
     }
 }
