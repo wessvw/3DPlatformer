@@ -45,8 +45,9 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        bool isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, controller.height / 2, 0), 0.2f, groundMask);
         // Ground check
-        isGrounded = controller.isGrounded;
+        // isGrounded = controller.isGrounded;
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
@@ -101,6 +102,18 @@ public class PlayerController : MonoBehaviour
         Vector3 pointToLookAt = new Vector3(0, 0, 0);
         playerCamera.transform.LookAt(this.transform.position + pointToLookAt); // aim at chest/head height
 
+        Vector3 raycastDirection = new Vector3(0, -1, 0);
+        if (Physics.Raycast(transform.position, raycastDirection, out RaycastHit hit, controller.height / 2 + 0.2f, groundMask))
+        {
+            Vector3 platformMove = (camForward * moveInput.y + camRight * moveInput.x).normalized;
+            if (hit.transform.GetComponent<VelocityCalculator>())
+            {
+                Debug.Log(hit.transform.name);
+                platformMove += hit.transform.GetComponent<VelocityCalculator>().GetVelocity();
+                controller.Move(platformMove * Time.deltaTime);
+            }
+        }
+
     }
 
     public void OnMove(InputValue input)
@@ -128,9 +141,9 @@ public class PlayerController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * 50 * -2f * gravity);
         }
 
-        if (hit.gameObject.tag == "")
+        if (hit.gameObject.tag == "movingObject")
         {
-            
+            // Debug.Log("movingObject is hit");
         }
         // Debug.Log(hit.gameObject.name);
     }

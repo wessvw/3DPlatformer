@@ -328,6 +328,9 @@ MonoBehaviour:
   jumpHeight: 2.1
   gravity: -9.8
   otherPlayer: {fileID: 0}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!1 &6450090508277849922
 GameObject:
   m_ObjectHideFlags: 0

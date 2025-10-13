@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 2064052703235159239}
   - component: {fileID: 4561916539561766144}
   - component: {fileID: 609864511609574223}
+  - component: {fileID: 1944426565706820866}
   m_Layer: 0
   m_Name: MovingPlatform
-  m_TagString: Untagged
+  m_TagString: movingObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -123,6 +124,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waittime: 0
   speed: 1
+--- !u!114 &1944426565706820866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 242632429042361488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc436760d42ba7f458e3a5594c6886d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4538152970885443093
 GameObject:
   m_ObjectHideFlags: 0
