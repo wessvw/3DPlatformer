@@ -11,14 +11,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpHeight = 2f;
     [SerializeField] float gravity = -9.81f;
     private float yaw = 0f;
-    private float pitch = 20f; // slight downward look by default
+    private float pitch = 20f;
     private float coyoteTimeCounter;
     private Vector2 moveInput;
-    private CharacterController controller;
-    private Vector3 velocity;
     private Vector2 vectorinput;
+    private Vector3 velocity;
+    private CharacterController controller;
     private Camera playerCamera;
+    public Collider otherPlayer;
+    public LayerMask groundMask;
     private bool isGrounded;
+    private bool isLaying = false;
 
     void Awake()
     {
@@ -40,7 +43,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    void Update()
+    void FixedUpdate()
     {
         // Ground check
         isGrounded = controller.isGrounded;
@@ -97,6 +100,7 @@ public class PlayerController : MonoBehaviour
         // Make camera look at player
         Vector3 pointToLookAt = new Vector3(0, 0, 0);
         playerCamera.transform.LookAt(this.transform.position + pointToLookAt); // aim at chest/head height
+
     }
 
     public void OnMove(InputValue input)
@@ -117,6 +121,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.gameObject.name == "fatMan(Clone)" && isLaying)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * 50 * -2f * gravity);
+        }
+
+        if (hit.gameObject.tag == "")
+        {
+            
+        }
+        // Debug.Log(hit.gameObject.name);
+    }
 
     public void OnLook(InputValue input)
     {
@@ -125,7 +142,14 @@ public class PlayerController : MonoBehaviour
 
     public void OnAbility1(InputValue input)
     {
-        Debug.Log("ab1");
+        if (isLaying == false)
+        {
+            isLaying = true;
+        }
+        else
+        {
+            isLaying = false;
+        }
     }
     public void OnAbility2(InputValue input)
     {
@@ -139,4 +163,6 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("ab4");
     }
+
+
 }
