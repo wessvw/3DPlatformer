@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     private Camera playerCamera;
     public Collider otherPlayer;
     public LayerMask groundMask;
+    public int collectAbleCount;
     private bool isGrounded;
     private bool isLaying = false;
 
@@ -166,7 +167,7 @@ public class PlayerController : MonoBehaviour
     }
     public void OnAbility2(InputValue input)
     {
-        Debug.Log("ab2");
+        Debug.Log(collectAbleCount);
     }
     public void OnAbility3(InputValue input)
     {

@@ -15,10 +15,6 @@ public class VelocityCalculator : MonoBehaviour
     {
         velocity = (transform.position - previousPosition) / Time.deltaTime;
         previousPosition = transform.position;
-
-        // _rotationDifference = (transform.rotation - _previousRotation) / Time.deltaTime;
-        // _previousRotation = transform.rotation;
-        // Debug.Log(_velocity);
     }
 
     // player script gets the platform's velocity from here
