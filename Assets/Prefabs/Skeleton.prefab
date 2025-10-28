@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 6574578975683189707}
   - component: {fileID: -2801819148416743980}
   m_Layer: 4
-  m_Name: Skeleton
+  m_Name: skeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -331,6 +331,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 1
+  collectAbleCount: 0
 --- !u!1 &6450090508277849922
 GameObject:
   m_ObjectHideFlags: 0

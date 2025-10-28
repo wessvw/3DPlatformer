@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float cameraDistance = 5f;
     [SerializeField] float jumpHeight = 2f;
     [SerializeField] float gravity = -9.81f;
+    private activateCanvasses canvasses;
     private float yaw = 0f;
     private float pitch = 20f;
     private float coyoteTimeCounter;
@@ -41,20 +42,15 @@ public class PlayerController : MonoBehaviour
         playerCamera = firstChild.GetComponent<Camera>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        // if (this.name == "fatMan(Clone)")
-        // {
-        //     fatManCanvas.enabled = true;
-        // }
-        // else if (this.name == "skeleton(Clone)")
-        // {
-        //     skeletonCanvas.enabled = true;
-        // }
+        GameObject canvassesObject = GameObject.Find("canvasses");
+        canvasses = canvassesObject.GetComponent<activateCanvasses>();
     }
 
 
     void FixedUpdate()
     {
-        bool isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, controller.height / 2, 0), 0.2f, groundMask);
+        bool isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, controller.height / 2, 0), 0.4f, groundMask);
+        Debug.Log(isGrounded);
         // Ground check
         // isGrounded = controller.isGrounded;
         if (isGrounded && velocity.y < 0)
@@ -184,6 +180,12 @@ public class PlayerController : MonoBehaviour
     public void OnAbility4(InputValue input)
     {
         Debug.Log("ab4");
+    }
+
+    public void updateCountInCanvas()
+    {
+        
+        canvasses.updateText(collectAbleCount,this.name);
     }
 
 
