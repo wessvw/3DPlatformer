@@ -1,4 +1,6 @@
 using System;
+using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -41,11 +43,47 @@ public class SplitScreenCamera : MonoBehaviour
         }
         else if (totalPlayers == 2)
         {
-            cam.rect = new Rect(index == 0 ? 0 : 0.5f, 0, 0.5f, 1);
+            float x, y, width, height;
+            width = 0.5f;
+            height = 1f;
+            y = 0f;
+
+            if (index == 0)
+            {
+                x = 0f;
+            }
+            else
+            {
+                x = 0.5f;
+            }
+
+            cam.rect = new Rect(x, y, width, height);
         }
         else
         {
-            cam.rect = new Rect((index % 2) * 0.5f, (index < 2) ? 0.5f : 0f, 0.5f, 0.5f);
+            float x, y, width, height;
+            width = 0.5f;
+            height = 0.5f;
+
+            if (index < 2)
+            {
+                y = 0.5f;
+            }
+            else
+            {
+                y = 0f;
+            }
+
+            if (index % 2 == 0)
+            {
+                x = 0f;
+            }
+            else
+            {
+                x = 0.5f;
+            }
+
+            cam.rect = new Rect(x, y, width, height);
         }
     }
 }

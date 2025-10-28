@@ -41,6 +41,14 @@ public class PlayerController : MonoBehaviour
         playerCamera = firstChild.GetComponent<Camera>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        // if (this.name == "fatMan(Clone)")
+        // {
+        //     fatManCanvas.enabled = true;
+        // }
+        // else if (this.name == "skeleton(Clone)")
+        // {
+        //     skeletonCanvas.enabled = true;
+        // }
     }
 
 
