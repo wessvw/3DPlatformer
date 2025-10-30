@@ -13,30 +13,29 @@ public class collectAble : MonoBehaviour
         collectableModel = this.transform.GetChild(0).gameObject;
         if (this.transform.GetChild(1) != null)
         {
-            particleSystemToPlay =  this.transform.GetChild(1).GetComponent<ParticleSystem>();
-        }
-    }
-
-    private void OnTriggerEnter(Collider collider)
-    {
-        Debug.Log(collider.name);
-        if (collider.name == "fatMan(Clone)" && whichCollectAble == "chee")
-        {
-            pickUpCollectAble(collider);
-        }
-        else if (collider.name == "skeleton(Clone)" && whichCollectAble == "milk")
-        {
-            pickUpCollectAble(collider);
+            particleSystemToPlay = this.transform.GetChild(1).GetComponent<ParticleSystem>();
         }
     }
 
     public void pickUpCollectAble(Collider collider)
     {
         particleSystemToPlay.Play();
-        Debug.Log("picked up " + whichCollectAble + " by " + collider.name);
-        PlayerController player = collider.GetComponent<PlayerController>();
-        player.collectAbleCount++;
-        player.updateCountInCanvas();
+        // Debug.Log("picked up " + whichCollectAble + " by " + collider.name);
+
+        FatManController fatMan = collider.GetComponent<FatManController>();
+        SkeletonController skeleton = collider.GetComponent<SkeletonController>();
+
+        if (fatMan != null)
+        {
+            fatMan.collectAbleCount++;
+            fatMan.updateCountInCanvas();
+        }
+        else if (skeleton != null)
+        {
+            skeleton.collectAbleCount++;
+            skeleton.updateCountInCanvas();
+        }
+        
         Destroy(collectableModel);
         source.PlayOneShot(clip);
         Destroy(this.gameObject, 5f);

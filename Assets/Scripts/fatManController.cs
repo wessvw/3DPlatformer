@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Composites;
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerController : MonoBehaviour
+public class FatManController : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float cameramoveSpeed = 150f;
@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 velocity;
     private CharacterController controller;
     private Camera playerCamera;
-    public Collider otherPlayer;
+    public SkeletonController skeleton;
     public LayerMask groundMask;
     public int collectAbleCount;
     private bool isGrounded;

@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 524171648822308508}
   - component: {fileID: 4423530718564942529}
   - component: {fileID: 6574578975683189707}
-  - component: {fileID: -2801819148416743980}
+  - component: {fileID: 2554039026880581830}
   m_Layer: 4
   m_Name: skeleton
   m_TagString: Untagged
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -2801819148416743980}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: characterController2, Assembly-CSharp
         m_MethodName: Move
         m_Mode: 0
@@ -266,7 +266,7 @@ MonoBehaviour:
     m_ActionName: 'Gameplay/Move[/DualSenseGamepadHID/leftStick,/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -2801819148416743980}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: characterController2, Assembly-CSharp
         m_MethodName: Jump
         m_Mode: 0
@@ -310,7 +310,7 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-2801819148416743980
+--- !u!114 &2554039026880581830
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -319,15 +319,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2621748438032768827}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 702d0fa10251ffe4bac35ed1358bf258, type: 3}
+  m_Script: {fileID: 11500000, guid: dcbe9459be059ef4d912b953c95bcc3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
   cameramoveSpeed: 250
   cameraDistance: 7
-  jumpHeight: 2.1
-  gravity: -9.8
-  otherPlayer: {fileID: 0}
+  jumpHeight: 2
+  gravity: -9.81
+  Fatman: {fileID: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 1
