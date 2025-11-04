@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ public class enemyScript : MonoBehaviour
 {
 
     public float viewRadius;
-    
+
     [Range(0, 360)]
     public float viewAngle;
 
@@ -17,7 +16,7 @@ public class enemyScript : MonoBehaviour
     public LayerMask obstacleMask;
     private NavMeshAgent agent;
     private bool isChasing = false;
-
+    private bool waschasing = false;
     private float rotateTimer = 0f;
     public float rotateInterval = 2f;
 
@@ -40,9 +39,21 @@ public class enemyScript : MonoBehaviour
         }
     }
 
+    IEnumerator activateConfusedLookAround()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (!isChasing)
+            {
+                transform.Rotate(new Vector3(0, 90, 0));
+                yield return new WaitForSeconds(1f);
+            }
+        }
+    }
+
     void Update()
     {
-        if (!isChasing)
+        if (!isChasing && !waschasing)
         {
             rotateTimer += Time.deltaTime;
 
@@ -56,7 +67,10 @@ public class enemyScript : MonoBehaviour
 
     void RotateRandomly()
     {
-        transform.Rotate(new Vector3(0, 20, 0)); // rotate 20 degrees
+        if(!waschasing)
+        {
+            transform.Rotate(new Vector3(0, 20, 0));
+        }
     }
 
 
@@ -86,15 +100,21 @@ public class enemyScript : MonoBehaviour
     {
         if (visibleTargets.Count > 0)
         {
+            // Quaternion.LookRotation(visibleTargets[0].position);
             isChasing = true;
+            waschasing = true;
             agent.SetDestination(visibleTargets[0].position);
             Quaternion.LookRotation(visibleTargets[0].position);
+        }
+        else if (isChasing == false && waschasing == true)
+        {
+            StartCoroutine("activateConfusedLookAround");
+            waschasing = false;
         }
         else
         {
             isChasing = false;
         }
     }
-
 }
 
