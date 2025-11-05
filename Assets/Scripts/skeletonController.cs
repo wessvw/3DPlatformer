@@ -23,7 +23,6 @@ public class SkeletonController : MonoBehaviour
     public LayerMask groundMask;
     public int collectAbleCount;
     private bool isGrounded;
-    private bool isLaying = false;
 
     void Awake()
     {
@@ -44,6 +43,8 @@ public class SkeletonController : MonoBehaviour
         Cursor.visible = false;
         GameObject canvassesObject = GameObject.Find("canvasses");
         canvasses = canvassesObject.GetComponent<activateCanvasses>();
+        Fatman = GameObject.Find("fatMan(Clone)").GetComponent<FatManController>();
+        Fatman.skeleton = this;
     }
 
 
@@ -141,9 +142,9 @@ public class SkeletonController : MonoBehaviour
 
     public void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (hit.gameObject.name == "fatMan(Clone)" && isLaying)
+        if (hit.gameObject.name == "fatMan(Clone)" && Fatman.isLaying)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * 50 * -2f * gravity);
+            velocity.y = Mathf.Sqrt(jumpHeight * 2 * -2f * gravity);
         }
 
         if (hit.gameObject.tag == "movingObject")

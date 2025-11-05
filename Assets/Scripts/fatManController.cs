@@ -23,8 +23,8 @@ public class FatManController : MonoBehaviour
     public LayerMask groundMask;
     public int collectAbleCount;
     private bool isGrounded;
-    private bool isLaying = false;
-
+    public bool isLaying = false;
+    Quaternion targetRotation = new Quaternion();
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -100,7 +100,11 @@ public class FatManController : MonoBehaviour
         playerCamera.transform.position = transform.position + offset;
 
         // rotate the player based on camera position
-        Quaternion targetRotation = Quaternion.LookRotation(camForward);
+        if (!isLaying)
+        {
+            targetRotation = Quaternion.LookRotation(camForward);
+        }
+
         this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, Time.deltaTime * 10f);
 
         // Make camera look at player
@@ -160,23 +164,35 @@ public class FatManController : MonoBehaviour
 
     public void OnAbility1(InputValue input)
     {
+
         if (isLaying == false)
         {
             isLaying = true;
+            moveSpeed = 0f;
+            jumpHeight = 0f;
+            controller.height = 1;
+            // Vector3 rotation = new Vector3(-180, 90, 0);
+            targetRotation = Quaternion.Euler(-90f, yaw, 0f);
         }
         else
         {
             isLaying = false;
+            moveSpeed = 5f;
+            jumpHeight = 2f;
+            controller.height = 2;
         }
     }
+
     public void OnAbility2(InputValue input)
     {
         Debug.Log(collectAbleCount);
     }
+
     public void OnAbility3(InputValue input)
     {
         Debug.Log("ab3");
     }
+
     public void OnAbility4(InputValue input)
     {
         Debug.Log("ab4");
@@ -184,8 +200,8 @@ public class FatManController : MonoBehaviour
 
     public void updateCountInCanvas()
     {
-        
-        canvasses.updateText(collectAbleCount,this.name);
+
+        canvasses.updateText(collectAbleCount, this.name);
     }
 
 
