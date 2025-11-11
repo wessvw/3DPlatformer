@@ -10,6 +10,7 @@ public class SkeletonController : MonoBehaviour
     [SerializeField] float cameraDistance = 5f;
     [SerializeField] float jumpHeight = 2f;
     [SerializeField] float gravity = -9.81f;
+    [SerializeField] Animator animationController;
     private activateCanvasses canvasses;
     private float yaw = 0f;
     private float pitch = 20f;
@@ -37,6 +38,7 @@ public class SkeletonController : MonoBehaviour
             Random.Range(0f, 1f),
             Random.Range(0f, 1f)
         );
+
         Transform firstChild = this.transform.GetChild(0);
         playerCamera = firstChild.GetComponent<Camera>();
         Cursor.lockState = CursorLockMode.Locked;
@@ -50,10 +52,11 @@ public class SkeletonController : MonoBehaviour
 
     void FixedUpdate()
     {
-        bool isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, controller.height / 2, 0), 0.4f, groundMask);
+        // bool isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, controller.height / 2, 0), 0.4f, groundMask);
         Debug.Log(isGrounded);
         // Ground check
-        // isGrounded = controller.isGrounded;
+        isGrounded = controller.isGrounded;
+
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
@@ -67,6 +70,8 @@ public class SkeletonController : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
+        animationController.SetBool("isGrounded", isGrounded);
+        animationController.SetFloat("speed", Mathf.Abs(moveInput.y + moveInput.x));
 
         // --- Movement relative to camera ---
         Vector3 camForward = playerCamera.transform.forward;
@@ -144,7 +149,7 @@ public class SkeletonController : MonoBehaviour
     {
         if (hit.gameObject.name == "fatMan(Clone)" && Fatman.isLaying)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * 2 * -2f * gravity);
+            velocity.y = -velocity.y;
         }
 
         if (hit.gameObject.tag == "movingObject")
@@ -178,7 +183,6 @@ public class SkeletonController : MonoBehaviour
 
     public void updateCountInCanvas()
     {
-        
         canvasses.updateText(collectAbleCount,this.name);
     }
 
