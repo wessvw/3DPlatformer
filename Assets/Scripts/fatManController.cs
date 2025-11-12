@@ -1,3 +1,5 @@
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Composites;
@@ -10,6 +12,9 @@ public class FatManController : MonoBehaviour
     [SerializeField] float cameraDistance = 5f;
     [SerializeField] float jumpHeight = 2f;
     [SerializeField] float gravity = -9.81f;
+    [SerializeField] Animator animationController;
+    [SerializeField] Collider layingHitBox;
+    private Transform fatManModel;
     private activateCanvasses canvasses;
     private float yaw = 0f;
     private float pitch = 20f;
@@ -28,16 +33,13 @@ public class FatManController : MonoBehaviour
     void Awake()
     {
         controller = GetComponent<CharacterController>();
+        Transform secondChild = this.transform.GetChild(1);
+        fatManModel = secondChild;
     }
 
     private void Start()
     {
         // Give each player a random color for clarity
-        GetComponent<Renderer>().material.color = new Color(
-            Random.Range(0f, 1f),
-            Random.Range(0f, 1f),
-            Random.Range(0f, 1f)
-        );
         Transform firstChild = this.transform.GetChild(0);
         playerCamera = firstChild.GetComponent<Camera>();
         Cursor.lockState = CursorLockMode.Locked;
@@ -49,10 +51,10 @@ public class FatManController : MonoBehaviour
 
     void FixedUpdate()
     {
-        bool isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, controller.height / 2, 0), 0.4f, groundMask);
+        // bool isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, controller.height / 2, 0), 0.4f, groundMask);
         Debug.Log(isGrounded);
         // Ground check
-        // isGrounded = controller.isGrounded;
+        isGrounded = controller.isGrounded;
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
@@ -65,6 +67,10 @@ public class FatManController : MonoBehaviour
         {
             coyoteTimeCounter -= Time.deltaTime;
         }
+
+        animationController.SetBool("isGrounded", isGrounded);
+        animationController.SetBool("isLaying", isLaying);
+        animationController.SetFloat("speed", Mathf.Abs(moveInput.y + moveInput.x));
 
 
         // --- Movement relative to camera ---
@@ -106,6 +112,8 @@ public class FatManController : MonoBehaviour
         }
 
         this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, Time.deltaTime * 10f);
+        // controller.
+
 
         // Make camera look at player
         Vector3 pointToLookAt = new Vector3(0, 0, 0);
@@ -170,16 +178,24 @@ public class FatManController : MonoBehaviour
             isLaying = true;
             moveSpeed = 0f;
             jumpHeight = 0f;
-            controller.height = 1;
-            // Vector3 rotation = new Vector3(-180, 90, 0);
+            controller.height = 0;
+            fatManModel.Rotate(new Vector3(90f, 0f, 0f));
+            // fatManModel.transform.localPosition = (new Vector3(0f, -0.2f, 0f));
+            controller.center = new Vector3(0, 0.6f, 0.4f);
+            layingHitBox.enabled = true;
             targetRotation = Quaternion.Euler(-90f, yaw, 0f);
         }
         else
         {
             isLaying = false;
+            velocity.y += 10;
             moveSpeed = 5f;
             jumpHeight = 2f;
-            controller.height = 2;
+            layingHitBox.enabled = false;
+            controller.center = new Vector3(0, 0.6f, 0);
+            controller.height = 3;
+            // fatManModel.transform.localPosition = (new Vector3(0f, 0, 0f));
+            fatManModel.Rotate(new Vector3(-90f, 0f, 0f));
         }
     }
 

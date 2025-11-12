@@ -163,6 +163,7 @@ GameObject:
   - component: {fileID: 1084469204980248204}
   - component: {fileID: 6138395332865385141}
   - component: {fileID: 3695524790595889692}
+  - component: {fileID: 2037230968415074569}
   m_Layer: 4
   m_Name: fatMan
   m_TagString: Untagged
@@ -183,8 +184,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6879201308428596273}
   - {fileID: 8319968255580831156}
+  - {fileID: 6879201308428596273}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3049308426005363722
@@ -276,12 +277,12 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 3
-  m_Radius: 0.5
+  m_Radius: 0.3
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.6, z: 0.2}
 --- !u!114 &3695524790595889692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,12 +300,37 @@ MonoBehaviour:
   cameraDistance: 7
   jumpHeight: 2.1
   gravity: -9.8
+  animationController: {fileID: 6708625393083080829}
+  layingHitBox: {fileID: 2037230968415074569}
   skeleton: {fileID: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 1
   collectAbleCount: 0
   isLaying: 0
+--- !u!136 &2037230968415074569
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8662669811409222185}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 0.34136653
+  m_Height: 2.6867533
+  m_Direction: 1
+  m_Center: {x: 0.031120777, y: 0.3360076, z: 0.26313853}
 --- !u!1001 &6412400574120367066
 PrefabInstance:
   m_ObjectHideFlags: 0
