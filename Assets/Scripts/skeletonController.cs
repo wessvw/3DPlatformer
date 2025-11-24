@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Composites;
@@ -24,6 +25,7 @@ public class SkeletonController : MonoBehaviour
     public LayerMask groundMask;
     public int collectAbleCount;
     private bool isGrounded;
+    public List<string> inventory;
 
     void Awake()
     {

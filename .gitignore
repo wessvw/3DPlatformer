@@ -77,3 +77,4 @@ crashlytics-build.properties
 .config/dotnet-tools.json
 /Assets/Models
 /Assets/2D
+/Assets/Materials

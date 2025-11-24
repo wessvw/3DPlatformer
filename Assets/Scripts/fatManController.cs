@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -29,6 +30,7 @@ public class FatManController : MonoBehaviour
     public int collectAbleCount;
     private bool isGrounded;
     public bool isLaying = false;
+    public List<string> inventory;
     Quaternion targetRotation = new Quaternion();
     void Awake()
     {
