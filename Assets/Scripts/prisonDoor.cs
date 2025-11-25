@@ -5,9 +5,9 @@ public class prisonDoor : MonoBehaviour
     [Header("Do not touch zone")]
     [SerializeField] private GameObject southPoint;
     [SerializeField] private GameObject northPoint;
-    [SerializeField] private LayerMask Playerlayer;
     [SerializeField] private BoxCollider boxCollider;
     [SerializeField] private Transform armature;
+    [SerializeField] private LayerMask Playerlayer;
     enum direction
     {
         North,

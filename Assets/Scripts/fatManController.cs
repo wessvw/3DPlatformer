@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Composites;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
 public class FatManController : MonoBehaviour
@@ -15,6 +16,7 @@ public class FatManController : MonoBehaviour
     [SerializeField] float gravity = -9.81f;
     [SerializeField] Animator animationController;
     [SerializeField] Collider layingHitBox;
+    [SerializeField] GameObject pickUpPoint;
     private Transform fatManModel;
     private activateCanvasses canvasses;
     private float yaw = 0f;
@@ -31,6 +33,9 @@ public class FatManController : MonoBehaviour
     private bool isGrounded;
     public bool isLaying = false;
     public List<string> inventory;
+    private bool isAiming = false;
+    public Vector3 camForward;
+    public Vector3 offset;
     Quaternion targetRotation = new Quaternion();
     void Awake()
     {
@@ -70,13 +75,14 @@ public class FatManController : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
+        //send animation values
         animationController.SetBool("isGrounded", isGrounded);
         animationController.SetBool("isLaying", isLaying);
         animationController.SetFloat("speed", Mathf.Abs(moveInput.y + moveInput.x));
 
 
         // --- Movement relative to camera ---
-        Vector3 camForward = playerCamera.transform.forward;
+        camForward = playerCamera.transform.forward;
         Vector3 camRight = playerCamera.transform.right;
 
         // Ignore vertical tilt of the camera
@@ -87,7 +93,10 @@ public class FatManController : MonoBehaviour
 
         // Build movement vector
         Vector3 move = (camForward * moveInput.y + camRight * moveInput.x).normalized;
-        controller.Move(move * moveSpeed * Time.deltaTime);
+        if (!isLaying)
+        {
+            controller.Move(move * moveSpeed * Time.deltaTime);
+        }
 
         // Gravity
         velocity.y += gravity * Time.deltaTime;
@@ -104,7 +113,7 @@ public class FatManController : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
 
         // Set camera position behind player
-        Vector3 offset = rotation * new Vector3(0f, 0f, -cameraDistance);
+        offset = rotation * new Vector3(0f, 0f, -cameraDistance);
         playerCamera.transform.position = transform.position + offset;
 
         // rotate the player based on camera position
@@ -119,7 +128,16 @@ public class FatManController : MonoBehaviour
 
         // Make camera look at player
         Vector3 pointToLookAt = new Vector3(0, 0, 0);
-        playerCamera.transform.LookAt(this.transform.position + pointToLookAt); // aim at chest/head height
+        if (!isAiming)
+        {
+            cameraDistance = 5f;
+            playerCamera.transform.LookAt(this.transform.position + pointToLookAt); // aim at chest/head heightD
+        }
+        else
+        {
+            cameraDistance = 3f;
+            playerCamera.transform.LookAt(pickUpPoint.transform.position + pointToLookAt); // aim at chest/head heightD
+        }
 
         Vector3 raycastDirection = new Vector3(0, -1, 0);
         if (Physics.Raycast(transform.position, raycastDirection, out RaycastHit hit, controller.height / 2 + 0.2f, groundMask))
@@ -142,7 +160,7 @@ public class FatManController : MonoBehaviour
 
     public void OnJump(InputValue input)
     {
-        if (input.isPressed && isGrounded)
+        if (input.isPressed && isGrounded && isLaying == false)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
@@ -174,13 +192,12 @@ public class FatManController : MonoBehaviour
 
     public void OnAbility1(InputValue input)
     {
-
+        // ablity to make the fatman lay down on the ground
         if (isLaying == false)
         {
             isLaying = true;
-            moveSpeed = 0f;
-            jumpHeight = 0f;
             controller.height = 0;
+            jumpHeight = 0f;
             fatManModel.Rotate(new Vector3(90f, 0f, 0f));
             // fatManModel.transform.localPosition = (new Vector3(0f, -0.2f, 0f));
             controller.center = new Vector3(0, 0.6f, 0.4f);
@@ -191,8 +208,7 @@ public class FatManController : MonoBehaviour
         {
             isLaying = false;
             velocity.y += 10;
-            moveSpeed = 5f;
-            jumpHeight = 2f;
+            jumpHeight = 2.1f;
             layingHitBox.enabled = false;
             controller.center = new Vector3(0, 0.6f, 0);
             controller.height = 3;
@@ -203,7 +219,24 @@ public class FatManController : MonoBehaviour
 
     public void OnAbility2(InputValue input)
     {
-        Debug.Log(collectAbleCount);
+        // ability to make the fatman pick up the skeleton and be able to throw him
+        float distance = Vector3.Distance(this.transform.position, skeleton.transform.position);
+        if (distance < 2f)
+        {
+            if (skeleton.isBall)
+            {
+                isAiming = true;
+                skeleton.ballGameObject.transform.SetParent(pickUpPoint.transform);
+                skeleton.ballGameObject.GetComponent<Rigidbody>().useGravity = false;
+                skeleton.ballGameObject.transform.position = pickUpPoint.transform.position;
+                skeleton.ballGameObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+            }
+            else
+            {
+                skeleton.ballGameObject.transform.SetParent(skeleton.transform);
+                skeleton.ballGameObject.GetComponent<Rigidbody>().useGravity = true;
+            }
+        }
     }
 
     public void OnAbility3(InputValue input)
@@ -216,10 +249,22 @@ public class FatManController : MonoBehaviour
         Debug.Log("ab4");
     }
 
+    public void OnShoot(InputValue value)
+    {
+        isAiming = false;
+        skeleton.ballGameObject.transform.SetParent(skeleton.transform);
+        skeleton.ballIsThrown = true;
+    }
+
     public void updateCountInCanvas()
     {
 
         canvasses.updateText(collectAbleCount, this.name);
+    }
+
+    public void OnRestart(InputValue input)
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
 

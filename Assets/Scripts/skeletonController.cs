@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Composites;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
 public class SkeletonController : MonoBehaviour
@@ -12,6 +13,8 @@ public class SkeletonController : MonoBehaviour
     [SerializeField] float jumpHeight = 2f;
     [SerializeField] float gravity = -9.81f;
     [SerializeField] Animator animationController;
+    [SerializeField] public GameObject ballGameObject;
+    [SerializeField] GameObject TposeSkeleton;
     private activateCanvasses canvasses;
     private float yaw = 0f;
     private float pitch = 20f;
@@ -24,6 +27,9 @@ public class SkeletonController : MonoBehaviour
     public FatManController Fatman;
     public LayerMask groundMask;
     public int collectAbleCount;
+    public bool isBall = false;
+    public bool ballIsThrown = false;
+    private bool ballInAir;
     private bool isGrounded;
     public List<string> inventory;
 
@@ -34,6 +40,7 @@ public class SkeletonController : MonoBehaviour
 
     private void Start()
     {
+        ballGameObject.SetActive(false);
         // Give each player a random color for clarity
         GetComponent<Renderer>().material.color = new Color(
             Random.Range(0f, 1f),
@@ -54,7 +61,7 @@ public class SkeletonController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // bool isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, controller.height / 2, 0), 0.4f, groundMask);
+
         Debug.Log(isGrounded);
         // Ground check
         isGrounded = controller.isGrounded;
@@ -87,7 +94,10 @@ public class SkeletonController : MonoBehaviour
 
         // Build movement vector
         Vector3 move = (camForward * moveInput.y + camRight * moveInput.x).normalized;
-        controller.Move(move * moveSpeed * Time.deltaTime);
+        if (!isBall)
+        {
+            controller.Move(move * moveSpeed * Time.deltaTime);
+        }
 
         // Gravity
         velocity.y += gravity * Time.deltaTime;
@@ -103,17 +113,53 @@ public class SkeletonController : MonoBehaviour
         // Calculate camera rotation
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
 
-        // Set camera position behind player
+        // Set camera position behind player and Make camera look at player
+        Vector3 pointToLookAt = new Vector3(0, 0, 0);
         Vector3 offset = rotation * new Vector3(0f, 0f, -cameraDistance);
-        playerCamera.transform.position = transform.position + offset;
+        if (isBall)
+        {
+            playerCamera.transform.position = ballGameObject.transform.position + offset;
+            playerCamera.transform.LookAt(ballGameObject.transform.position + pointToLookAt);
+        }
+        else
+        {
+            playerCamera.transform.position = this.transform.position + offset;
+            playerCamera.transform.LookAt(this.transform.position + pointToLookAt);
+        }
+
+        if (ballIsThrown)
+        {
+            Rigidbody ballRigidBody = ballGameObject.GetComponent<Rigidbody>();
+            Vector3 direction = new Vector3(0, 0.4f, 0);
+            ballRigidBody.useGravity = true;
+            // Vector3 oppositeOffset = -Fatman.offset;
+            Vector3 fatmanCamforward = new Vector3(Fatman.camForward.x, Fatman.camForward.y + direction.y, Fatman.camForward.z);
+            ballRigidBody.AddForce(-Fatman.offset + fatmanCamforward * 10, ForceMode.Impulse);
+            ballInAir = true;
+            ballIsThrown = false;
+        }
+        // this.transform.position = ballGameObject.transform.position;
+        if (ballInAir)
+        {
+            bool ballIsGrounded = Physics.CheckSphere(ballGameObject.transform.position - new Vector3(1f, 1f, 1f), 0.1f, groundMask);
+            if (ballIsGrounded)
+            {
+                this.transform.position = ballGameObject.transform.position;
+                isBall = false;
+                transformIntoBall(isBall);
+                ballInAir = false;
+            }
+        }
+
+        // if (isBall && isGrounded)
+        // {
+        //     ballGameObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+        // }
 
         // rotate the player based on camera position
         Quaternion targetRotation = Quaternion.LookRotation(camForward);
         this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, Time.deltaTime * 10f);
 
-        // Make camera look at player
-        Vector3 pointToLookAt = new Vector3(0, 0, 0);
-        playerCamera.transform.LookAt(this.transform.position + pointToLookAt); // aim at chest/head height
 
         Vector3 raycastDirection = new Vector3(0, -1, 0);
         if (Physics.Raycast(transform.position, raycastDirection, out RaycastHit hit, controller.height / 2 + 0.2f, groundMask))
@@ -168,7 +214,18 @@ public class SkeletonController : MonoBehaviour
 
     public void OnAbility1(InputValue input)
     {
-
+        if (isBall)
+        {
+            isBall = false;
+            jumpHeight = 2.1f;
+            transformIntoBall(isBall);
+        }
+        else
+        {
+            isBall = true;
+            jumpHeight = 0f;
+            transformIntoBall(isBall);
+        }
     }
     public void OnAbility2(InputValue input)
     {
@@ -185,7 +242,21 @@ public class SkeletonController : MonoBehaviour
 
     public void updateCountInCanvas()
     {
-        canvasses.updateText(collectAbleCount,this.name);
+        canvasses.updateText(collectAbleCount, this.name);
+    }
+
+    public void OnRestart(InputValue input)
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void transformIntoBall(bool istheBall)
+    {
+        TposeSkeleton.SetActive(!istheBall);
+        ballGameObject.SetActive(istheBall);
+        ballGameObject.transform.position = new Vector3(this.transform.position.x, this.transform.position.y + 1f, this.transform.position.z);
+        ballGameObject.GetComponent<Rigidbody>().useGravity = true;
+        ballGameObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
     }
 
 
