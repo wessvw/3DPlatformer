@@ -14,10 +14,13 @@ public class prisonDoor : MonoBehaviour
         South,
         Both,
     }
+    [Space]
     [Header("Customizeable")]
     [SerializeField] private direction openDirection;
     [SerializeField] private string doorID;
     [SerializeField] private bool isLocked = false;
+    [SerializeField] private bool isDoubleDoor = false;
+    [SerializeField] private prisonDoor otherDoor;
 
 
     private void OnTriggerEnter(Collider collider)
@@ -55,19 +58,37 @@ public class prisonDoor : MonoBehaviour
     {
         // it checks at which side the player is at and which direction it can be openned at
         // it also checks which side its at and opens it from that side if the door can be opened from both directions
-        if (Physics.CheckSphere(southPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.North || Physics.CheckSphere(southPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.Both)
+        if (!isDoubleDoor)
         {
-            Vector3 rotation = new Vector3(0, 0, 90);
-            openDoor(rotation);
+            if (Physics.CheckSphere(southPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.North || Physics.CheckSphere(southPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.Both)
+            {
+                Vector3 rotation = new Vector3(0, 0, 90);
+                openDoor(rotation);
+            }
+            else if (Physics.CheckSphere(northPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.South || Physics.CheckSphere(northPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.Both)
+            {
+                Vector3 rotation = new Vector3(0, 0, -90);
+                openDoor(rotation);
+            }
         }
-        else if (Physics.CheckSphere(northPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.South || Physics.CheckSphere(northPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.Both)
+        else
         {
-            Vector3 rotation = new Vector3(0, 0, -90);
-            openDoor(rotation);
+            if (Physics.CheckSphere(southPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.North || Physics.CheckSphere(southPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.Both)
+            {
+                Vector3 rotation = new Vector3(0, 0, 90);
+                openDoor(rotation);
+                otherDoor.openDoor(-rotation);
+            }
+            else if (Physics.CheckSphere(northPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.South || Physics.CheckSphere(northPoint.gameObject.transform.position, 1.5f, Playerlayer) && openDirection == direction.Both)
+            {
+                Vector3 rotation = new Vector3(0, 0, -90);
+                openDoor(-rotation);
+                otherDoor.openDoor(rotation);
+            }
         }
     }
 
-    private void openDoor(Vector3 rotation)
+    public void openDoor(Vector3 rotation)
     {
         armature.Rotate(rotation);
         boxCollider.enabled = false;

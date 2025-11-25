@@ -114,6 +114,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Door
       objectReference: {fileID: 0}
+    - target: {fileID: 8417361359673230750, guid: 7c00867ca7841db4c8ce365665e1e54c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ed4582592f1811d4aaf3b4f13b542fdd, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -156,15 +160,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffa7b7a25c3cc0a44b6acc98a47bb980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lockedDoor: 1
   southPoint: {fileID: 6253386397516666002}
   northPoint: {fileID: 8374176348520659875}
+  boxCollider: {fileID: 8910688045249038022}
+  armature: {fileID: 9187973786453441313}
   Playerlayer:
     serializedVersion: 2
     m_Bits: 16
-  doorCollider: {fileID: 1095556517462867504}
-  boxCollider: {fileID: 8910688045249038022}
-  armature: {fileID: 9187973786453441313}
+  openDirection: 0
+  doorID: 
+  isLocked: 0
 --- !u!65 &3333813739495133802
 BoxCollider:
   m_ObjectHideFlags: 0

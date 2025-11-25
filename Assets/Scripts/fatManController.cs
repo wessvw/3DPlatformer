@@ -59,7 +59,7 @@ public class FatManController : MonoBehaviour
     void FixedUpdate()
     {
         // bool isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, controller.height / 2, 0), 0.4f, groundMask);
-        Debug.Log(isGrounded);
+        // Debug.Log(isGrounded);
         // Ground check
         isGrounded = controller.isGrounded;
         if (isGrounded && velocity.y < 0)
@@ -192,44 +192,53 @@ public class FatManController : MonoBehaviour
 
     public void OnAbility1(InputValue input)
     {
-        // ablity to make the fatman lay down on the ground
-        if (isLaying == false)
-        {
-            isLaying = true;
-            controller.height = 0;
-            jumpHeight = 0f;
-            fatManModel.Rotate(new Vector3(90f, 0f, 0f));
-            // fatManModel.transform.localPosition = (new Vector3(0f, -0.2f, 0f));
-            controller.center = new Vector3(0, 0.6f, 0.4f);
-            layingHitBox.enabled = true;
-            targetRotation = Quaternion.Euler(-90f, yaw, 0f);
-        }
-        else
-        {
-            isLaying = false;
-            velocity.y += 10;
-            jumpHeight = 2.1f;
-            layingHitBox.enabled = false;
-            controller.center = new Vector3(0, 0.6f, 0);
-            controller.height = 3;
-            // fatManModel.transform.localPosition = (new Vector3(0f, 0, 0f));
-            fatManModel.Rotate(new Vector3(-90f, 0f, 0f));
-        }
+        // if (collectAbleCount >= 2)
+        // {
+            // ablity to make the fatman lay down on the ground
+            if (isLaying == false)
+            {
+                isLaying = true;
+                controller.height = 0;
+                jumpHeight = 0f;
+                fatManModel.Rotate(new Vector3(90f, 0f, 0f));
+                // fatManModel.transform.localPosition = (new Vector3(0f, -0.2f, 0f));
+                controller.center = new Vector3(0, 0.6f, 0.4f);
+                layingHitBox.enabled = true;
+                targetRotation = Quaternion.Euler(-90f, yaw, 0f);
+            }
+            else
+            {
+                isLaying = false;
+                velocity.y += 10;
+                jumpHeight = 2.1f;
+                layingHitBox.enabled = false;
+                controller.center = new Vector3(0, 0.6f, 0);
+                controller.height = 3;
+                // fatManModel.transform.localPosition = (new Vector3(0f, 0, 0f));
+                fatManModel.Rotate(new Vector3(-90f, 0f, 0f));
+            }
+        // }
     }
 
     public void OnAbility2(InputValue input)
     {
         // ability to make the fatman pick up the skeleton and be able to throw him
-        float distance = Vector3.Distance(this.transform.position, skeleton.transform.position);
+        float distance = 0;
+        if (skeleton != null)
+        {
+            distance = Vector3.Distance(this.transform.position, skeleton.transform.position);
+        }
+
         if (distance < 2f)
         {
             if (skeleton.isBall)
             {
+                Rigidbody rigibodyBallGameObject = skeleton.ballGameObject.GetComponent<Rigidbody>();
                 isAiming = true;
                 skeleton.ballGameObject.transform.SetParent(pickUpPoint.transform);
-                skeleton.ballGameObject.GetComponent<Rigidbody>().useGravity = false;
+                rigibodyBallGameObject.useGravity = false;
                 skeleton.ballGameObject.transform.position = pickUpPoint.transform.position;
-                skeleton.ballGameObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+                rigibodyBallGameObject.linearVelocity = Vector3.zero;
             }
             else
             {

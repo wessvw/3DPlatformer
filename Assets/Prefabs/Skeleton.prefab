@@ -1076,8 +1076,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1350953563781061235}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.331087, y: -0.000012874603, z: -13.395052}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -4.118814, y: 5.4154615, z: 49.577972}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1085,7 +1085,7 @@ Transform:
   - {fileID: 6715572306294453042}
   - {fileID: 158087038920932356}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!114 &5289249507298549626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1155,7 +1155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   cameramoveSpeed: 250
-  cameraDistance: 7
+  cameraDistance: 5
   jumpHeight: 2.1
   gravity: -9.81
   animationController: {fileID: 3493945454613586805}
@@ -1167,6 +1167,7 @@ MonoBehaviour:
     m_Bits: 1
   collectAbleCount: 0
   isBall: 0
+  ballIsThrown: 0
   inventory: []
 --- !u!23 &6108615706711290614
 MeshRenderer:

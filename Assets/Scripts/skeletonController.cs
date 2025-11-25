@@ -61,8 +61,7 @@ public class SkeletonController : MonoBehaviour
 
     void FixedUpdate()
     {
-
-        Debug.Log(isGrounded);
+        // Debug.Log(isGrounded);
         // Ground check
         isGrounded = controller.isGrounded;
 
@@ -214,18 +213,21 @@ public class SkeletonController : MonoBehaviour
 
     public void OnAbility1(InputValue input)
     {
-        if (isBall)
-        {
-            isBall = false;
-            jumpHeight = 2.1f;
-            transformIntoBall(isBall);
-        }
-        else
-        {
-            isBall = true;
-            jumpHeight = 0f;
-            transformIntoBall(isBall);
-        }
+        // if (collectAbleCount >= 2)
+        // {
+            if (isBall)
+            {
+                isBall = false;
+                // jumpHeight = 2.1f;
+                transformIntoBall(isBall);
+            }
+            else
+            {
+                isBall = true;
+                // jumpHeight = 0f;
+                transformIntoBall(isBall);
+            }
+        // }
     }
     public void OnAbility2(InputValue input)
     {
