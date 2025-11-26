@@ -34,6 +34,7 @@ public class FatManController : MonoBehaviour
     public bool isLaying = false;
     public List<string> inventory;
     private bool isAiming = false;
+    public bool isHoldingSkeleton;
     public Vector3 camForward;
     public Vector3 offset;
     Quaternion targetRotation = new Quaternion();
@@ -194,29 +195,29 @@ public class FatManController : MonoBehaviour
     {
         // if (collectAbleCount >= 2)
         // {
-            // ablity to make the fatman lay down on the ground
-            if (isLaying == false)
-            {
-                isLaying = true;
-                controller.height = 0;
-                jumpHeight = 0f;
-                fatManModel.Rotate(new Vector3(90f, 0f, 0f));
-                // fatManModel.transform.localPosition = (new Vector3(0f, -0.2f, 0f));
-                controller.center = new Vector3(0, 0.6f, 0.4f);
-                layingHitBox.enabled = true;
-                targetRotation = Quaternion.Euler(-90f, yaw, 0f);
-            }
-            else
-            {
-                isLaying = false;
-                velocity.y += 10;
-                jumpHeight = 2.1f;
-                layingHitBox.enabled = false;
-                controller.center = new Vector3(0, 0.6f, 0);
-                controller.height = 3;
-                // fatManModel.transform.localPosition = (new Vector3(0f, 0, 0f));
-                fatManModel.Rotate(new Vector3(-90f, 0f, 0f));
-            }
+        // ablity to make the fatman lay down on the ground
+        if (isLaying == false)
+        {
+            isLaying = true;
+            controller.height = 0;
+            jumpHeight = 0f;
+            fatManModel.Rotate(new Vector3(90f, 0f, 0f));
+            // fatManModel.transform.localPosition = (new Vector3(0f, -0.2f, 0f));
+            controller.center = new Vector3(0, 0.6f, 0.4f);
+            layingHitBox.enabled = true;
+            targetRotation = Quaternion.Euler(-90f, yaw, 0f);
+        }
+        else
+        {
+            isLaying = false;
+            velocity.y += 10;
+            jumpHeight = 2.1f;
+            layingHitBox.enabled = false;
+            controller.center = new Vector3(0, 0.6f, 0);
+            controller.height = 3;
+            // fatManModel.transform.localPosition = (new Vector3(0f, 0, 0f));
+            fatManModel.Rotate(new Vector3(-90f, 0f, 0f));
+        }
         // }
     }
 
@@ -239,6 +240,7 @@ public class FatManController : MonoBehaviour
                 rigibodyBallGameObject.useGravity = false;
                 skeleton.ballGameObject.transform.position = pickUpPoint.transform.position;
                 rigibodyBallGameObject.linearVelocity = Vector3.zero;
+                isHoldingSkeleton = true;
             }
             else
             {
@@ -260,9 +262,12 @@ public class FatManController : MonoBehaviour
 
     public void OnShoot(InputValue value)
     {
-        isAiming = false;
-        skeleton.ballGameObject.transform.SetParent(skeleton.transform);
-        skeleton.ballIsThrown = true;
+        if (isHoldingSkeleton)
+        {
+            isAiming = false;
+            skeleton.ballGameObject.transform.SetParent(skeleton.transform);
+            skeleton.ballIsThrown = true;
+        }
     }
 
     public void updateCountInCanvas()

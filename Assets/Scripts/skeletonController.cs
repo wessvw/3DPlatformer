@@ -113,7 +113,7 @@ public class SkeletonController : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
 
         // Set camera position behind player and Make camera look at player
-        Vector3 pointToLookAt = new Vector3(0, 0, 0);
+        Vector3 pointToLookAt = new Vector3(0, 2, 0);
         Vector3 offset = rotation * new Vector3(0f, 0f, -cameraDistance);
         if (isBall)
         {
@@ -136,6 +136,7 @@ public class SkeletonController : MonoBehaviour
             ballRigidBody.AddForce(-Fatman.offset + fatmanCamforward * 10, ForceMode.Impulse);
             ballInAir = true;
             ballIsThrown = false;
+            Fatman.isHoldingSkeleton = false;
         }
         // this.transform.position = ballGameObject.transform.position;
         if (ballInAir)
@@ -215,18 +216,18 @@ public class SkeletonController : MonoBehaviour
     {
         // if (collectAbleCount >= 2)
         // {
-            if (isBall)
-            {
-                isBall = false;
-                // jumpHeight = 2.1f;
-                transformIntoBall(isBall);
-            }
-            else
-            {
-                isBall = true;
-                // jumpHeight = 0f;
-                transformIntoBall(isBall);
-            }
+        if (isBall)
+        {
+            isBall = false;
+            // jumpHeight = 2.1f;
+            transformIntoBall(isBall);
+        }
+        else
+        {
+            isBall = true;
+            // jumpHeight = 0f;
+            transformIntoBall(isBall);
+        }
         // }
     }
     public void OnAbility2(InputValue input)
@@ -259,6 +260,14 @@ public class SkeletonController : MonoBehaviour
         ballGameObject.transform.position = new Vector3(this.transform.position.x, this.transform.position.y + 1f, this.transform.position.z);
         ballGameObject.GetComponent<Rigidbody>().useGravity = true;
         ballGameObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+        if (isBall)
+        {
+            controller.height = 0;
+        }
+        else
+        {
+            controller.height = 2f;
+        }
     }
 
 
