@@ -115,14 +115,38 @@ public class SkeletonController : MonoBehaviour
         // Set camera position behind player and Make camera look at player
         Vector3 pointToLookAt = new Vector3(0, 2, 0);
         Vector3 offset = rotation * new Vector3(0f, 0f, -cameraDistance);
+
+
         if (isBall)
         {
-            playerCamera.transform.position = ballGameObject.transform.position + offset;
+            Vector3 desiredPos = ballGameObject.transform.position + offset;
+
+            // Camera collision check (ball mode)
+            if (Physics.Raycast(ballGameObject.transform.position, offset.normalized, out RaycastHit camHit, cameraDistance, groundMask))
+            {
+                playerCamera.transform.position = ballGameObject.transform.position + offset.normalized * (camHit.distance - 0.2f);
+            }
+            else
+            {
+                playerCamera.transform.position = desiredPos;
+            }
+
             playerCamera.transform.LookAt(ballGameObject.transform.position + pointToLookAt);
         }
         else
         {
-            playerCamera.transform.position = this.transform.position + offset;
+            Vector3 desiredPos = this.transform.position + offset;
+
+            // Camera collision check (normal skeleton mode)
+            if (Physics.Raycast(transform.position, offset.normalized, out RaycastHit camHit, cameraDistance, groundMask))
+            {
+                playerCamera.transform.position = transform.position + offset.normalized * (camHit.distance - 0.2f);
+            }
+            else
+            {
+                playerCamera.transform.position = desiredPos;
+            }
+
             playerCamera.transform.LookAt(this.transform.position + pointToLookAt);
         }
 
@@ -158,7 +182,10 @@ public class SkeletonController : MonoBehaviour
 
         // rotate the player based on camera position
         Quaternion targetRotation = Quaternion.LookRotation(camForward);
-        this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, Time.deltaTime * 10f);
+        if (!isBall)
+        {
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
 
 
         Vector3 raycastDirection = new Vector3(0, -1, 0);
@@ -216,18 +243,18 @@ public class SkeletonController : MonoBehaviour
     {
         // if (collectAbleCount >= 2)
         // {
-        if (isBall)
-        {
-            isBall = false;
-            // jumpHeight = 2.1f;
-            transformIntoBall(isBall);
-        }
-        else
-        {
-            isBall = true;
-            // jumpHeight = 0f;
-            transformIntoBall(isBall);
-        }
+            if (isBall)
+            {
+                isBall = false;
+                // jumpHeight = 2.1f;
+                transformIntoBall(isBall);
+            }
+            else
+            {
+                isBall = true;
+                // jumpHeight = 0f;
+                transformIntoBall(isBall);
+            }
         // }
     }
     public void OnAbility2(InputValue input)

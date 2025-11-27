@@ -99,6 +99,7 @@ public class FatManController : MonoBehaviour
             controller.Move(move * moveSpeed * Time.deltaTime);
         }
 
+
         // Gravity
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
@@ -108,14 +109,35 @@ public class FatManController : MonoBehaviour
         pitch -= vectorinput.y * cameramoveSpeed * Time.deltaTime;
 
         // Clamp vertical pitch so camera doesn’t flip
-        pitch = Mathf.Clamp(pitch, 0f, 70f);
+        if (!isHoldingSkeleton)
+        {
+            pitch = Mathf.Clamp(pitch, 0f, 70f);
+        }
+        else
+        {
+            // Debug.Log("")
+            pitch = Mathf.Clamp(pitch, 0f, 50f);
+        }
 
         // Calculate camera rotation
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
 
         // Set camera position behind player
         offset = rotation * new Vector3(0f, 0f, -cameraDistance);
-        playerCamera.transform.position = transform.position + offset;
+
+        Vector3 desiredPos = transform.position + offset;
+
+        // Camera collision prevention
+        if (Physics.Raycast(transform.position, offset.normalized, out RaycastHit camHit, cameraDistance, groundMask))
+        {
+            // Move camera forward to the hit point (minus small offset)
+            playerCamera.transform.position = transform.position + offset.normalized * (camHit.distance - 0.2f);
+        }
+        else
+        {
+            // No obstacle, use full distance
+            playerCamera.transform.position = desiredPos;
+        }
 
         // rotate the player based on camera position
         if (!isLaying)
@@ -193,32 +215,36 @@ public class FatManController : MonoBehaviour
 
     public void OnAbility1(InputValue input)
     {
-        // if (collectAbleCount >= 2)
-        // {
-        // ablity to make the fatman lay down on the ground
-        if (isLaying == false)
+        if (collectAbleCount >= 2)
         {
-            isLaying = true;
-            controller.height = 0;
-            jumpHeight = 0f;
-            fatManModel.Rotate(new Vector3(90f, 0f, 0f));
-            // fatManModel.transform.localPosition = (new Vector3(0f, -0.2f, 0f));
-            controller.center = new Vector3(0, 0.6f, 0.4f);
-            layingHitBox.enabled = true;
-            targetRotation = Quaternion.Euler(-90f, yaw, 0f);
+            if (isGrounded)
+            {
+
+                if (isLaying == false)
+                {
+                    isLaying = true;
+                    controller.height = 0;
+                    jumpHeight = 0f;
+                    fatManModel.Rotate(new Vector3(90f, 0f, 0f));
+                    // fatManModel.transform.localPosition = (new Vector3(0f, -0.2f, 0f));
+                    controller.center = new Vector3(0, 0.6f, 0.4f);
+                    layingHitBox.enabled = true;
+                    targetRotation = Quaternion.Euler(-90f, yaw, 0f);
+                }
+                else
+                {
+                    isLaying = false;
+                    velocity.y += 10;
+                    jumpHeight = 2.1f;
+                    layingHitBox.enabled = false;
+                    controller.center = new Vector3(0, 0.6f, 0);
+                    controller.height = 3;
+                    // fatManModel.transform.localPosition = (new Vector3(0f, 0, 0f));
+                    fatManModel.Rotate(new Vector3(-90f, 0f, 0f));
+                }
+            }
+            // ablity to make the fatman lay down on the ground
         }
-        else
-        {
-            isLaying = false;
-            velocity.y += 10;
-            jumpHeight = 2.1f;
-            layingHitBox.enabled = false;
-            controller.center = new Vector3(0, 0.6f, 0);
-            controller.height = 3;
-            // fatManModel.transform.localPosition = (new Vector3(0f, 0, 0f));
-            fatManModel.Rotate(new Vector3(-90f, 0f, 0f));
-        }
-        // }
     }
 
     public void OnAbility2(InputValue input)
@@ -227,7 +253,7 @@ public class FatManController : MonoBehaviour
         float distance = 0;
         if (skeleton != null)
         {
-            distance = Vector3.Distance(this.transform.position, skeleton.transform.position);
+            distance = Vector3.Distance(this.transform.position, skeleton.ballGameObject.transform.position);
         }
 
         if (distance < 2f)

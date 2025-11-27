@@ -439,8 +439,8 @@
                 },
                 {
                     "name": "",
-                    "id": "86eb27be-31cb-4762-8246-e7516b277a7d",
-                    "path": "<Gamepad>/rightStickPress",
+                    "id": "ed557e5b-5c5b-4310-aa33-a377df804f96",
+                    "path": "<Gamepad>/start",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",

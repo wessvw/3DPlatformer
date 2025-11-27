@@ -1374,15 +1374,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8662669811409222185}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.7332257, z: 0, w: 0.6799854}
-  m_LocalPosition: {x: -38.841377, y: 1.11, z: 6.664482}
+  m_LocalRotation: {x: -0, y: 0.70546305, z: -0, w: 0.7087468}
+  m_LocalPosition: {x: 4.749516, y: 12.91, z: 52.88582}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8319968255580831156}
   - {fileID: 6879201308428596273}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -94.315, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 89.734, z: 0}
 --- !u!33 &3049308426005363722
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1474,7 +1474,7 @@ CharacterController:
   m_Height: 3
   m_Radius: 0.3
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.45
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.6, z: 0.2}
@@ -1505,6 +1505,7 @@ MonoBehaviour:
   collectAbleCount: 0
   isLaying: 0
   inventory: []
+  isHoldingSkeleton: 0
   camForward: {x: 0, y: 0, z: 0}
   offset: {x: 0, y: 0, z: 0}
 --- !u!136 &2037230968415074569
